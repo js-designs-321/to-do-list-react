@@ -1,57 +1,51 @@
-import React from "react";
-import ListItem from "./ToDoListItem";
+import React, { useState } from "react";
+import ToDoItem from "./ToDoItem";
+import InputArea from "./InputArea";
 
 function App() {
+  const [inputText, setInputText] = useState("");
+  const [items, setItems] = useState([]);
 
-    const[task, setTask] = React.useState("");
-    const[tasks, setTasks] = React.useState([]); 
+  function handleChange(event) {
+    const newValue = event.target.value;
+    setInputText(newValue);
+  }
 
-    function handler(event){
-        const value = event.target.value;
-        setTask(value); 
-    }
+  function addItem() {
+    setItems(prevItems => {
+      return [...prevItems, inputText];
+    });
+    setInputText("");
+  }
 
-    function addTask(){
-        setTasks((prevState) => {
-            return [
-                ...prevState, 
-                task
-            ]
-        });
-        setTask("");
-    }
-
-    function deleteItem(id){
-      setTasks(prevItems => {
-        return prevItems.filter((tasks, index) => {
-          return index !== id;
-        });
+  function deleteItem(id) {
+    setItems(prevItems => {
+      return prevItems.filter((item, index) => {
+        return index !== id;
       });
-    }
+    });
+  }
 
   return (
     <div className="container">
       <div className="heading">
         <h1>To-Do List</h1>
       </div>
-      <div className="form">
-        <input type="text" value={task} onChange={handler}/>
-        <button onClick={addTask}>
-          <span>Add</span>
-        </button>
-      </div>
+      <InputArea 
+        text={inputText}
+        handleChange={handleChange}
+        addItem={addItem}
+      />
       <div>
         <ul>
-          {tasks.map((oneTask,index) => {
-            return(
-              <ListItem 
+          {items.map((todoItem, index) => ( 
+            <ToDoItem
               key={index}
               id={index}
-              text = {oneTask}
-              delete = {deleteItem}
-              />
-            )})
-          }
+              text={todoItem}
+              onChecked={deleteItem}
+            />
+          ))}
         </ul>
       </div>
     </div>
